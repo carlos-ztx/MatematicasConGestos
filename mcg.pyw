@@ -4,24 +4,10 @@ from cvzone.HandTrackingModule import HandDetector
 import numpy as np
 import google.generativeai as genai
 from PIL import Image
-import streamlit as st
-
-st.set_page_config(layout="wide")
-st.image('Matematicas.png')
-
-colum1, colum2 = st.columns([2,1])
-with colum1:
-    run = st.checkbox('Run', value=True)
-    FRAME_WINDOW = st.image([])
-with colum2:
-    output_text_area = st.title('Respuesta')
-    output_text_area = st.subheader("")
-
 
 #Utilizar la API de Google Gemini
 genai.configure(api_key="AIzaSyAXd0UElxbXCjYRPh-pP7TQbdhN0FjNYl8")
 model = genai.GenerativeModel("gemini-1.5-flash")
-
 
 cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
@@ -40,8 +26,8 @@ def getHandInfo(img, bDraw = True):
 
     if hands:
         hand = hands[0]
-        lmList = hand["lmList"]
         fingers = detector.fingersUp(hand)
+        lmList = hand["lmList"]
 
         #length, info, img = detector.findDistance(lmList1[8][0:2], lmList1[12][0:2], img, color=(255, 0, 255),scale=10)
 
@@ -62,11 +48,10 @@ def draw(info,prev_pos, canvas, img):
         canvas = np.zeros_like(img)
     return current_pos, canvas
 
-def sendToAi(model, canvas, fingers):
+def sendToAi(model, canvas):
         pil_image = Image.fromarray(canvas)
         response = model.generate_content([prompt,pil_image])
-        #print(response.text)
-        output_text_area.text(response.text)
+        print(response.text)
 
 while True:
     success, img = cap.read()
@@ -81,11 +66,10 @@ while True:
         #print(fingers)
         prev_pos, canvas = draw(handInfo, prev_pos, canvas, img)
         if fingers == [1, 1, 1, 1, 0]:
-            sendToAi(model, canvas, fingers)
+            sendToAi(model, canvas)
 
     image_combined = cv2.addWeighted(img, 0.65, canvas, 0.35, 0)
-    FRAME_WINDOW.image(image_combined,channels="BGR")
-    #cv2.imshow("last",image_combined)
+    cv2.imshow("Matemáticas Con Gestos (MCG)",image_combined)
     #cv2.imshow("Image", img)
     #cv2.imshow("Canvaaas", canvas)
     cv2.waitKey(1)
