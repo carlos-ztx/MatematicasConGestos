@@ -6,7 +6,7 @@ import google.generativeai as genai
 from PIL import Image
 
 #Utilizar la API de Google Gemini
-genai.configure(api_key="AIzaSyAXd0UElxbXCjYRPh-pP7TQbdhN0FjNYl8")
+genai.configure(api_key="")
 model = genai.GenerativeModel("gemini-1.5-flash")
 
 cap = cv2.VideoCapture(0)
@@ -73,4 +73,3 @@ while True:
     #cv2.imshow("Image", img)
     #cv2.imshow("Canvaaas", canvas)
     cv2.waitKey(1)
-
